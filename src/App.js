@@ -2,18 +2,31 @@ import React, { useCallback, useState } from 'react';
 import './App.css';
 import TableMap from './components/TableMap';
 import MesaModal from './components/MesaModal';
+import ConfirmDialog from './components/ConfirmDialog';
 import Kpis from './components/Kpis';
 import Legend from './components/Legend';
 import { useMesasState } from './hooks/useMesasState';
+import { STATUS } from './data/statusConfig';
 import logoTitulo from './imagens/logotipo_titulo.png';
 
 function App() {
   const { mesas, getMesa, saveMesa, resetMesa, loading, error } = useMesasState();
   const [mesaSelecionada, setMesaSelecionada] = useState(null);
+  const [mesaParaConfirmar, setMesaParaConfirmar] = useState(null);
 
-  const handleSelectMesa = useCallback((mesaId) => {
-    setMesaSelecionada(mesaId);
-  }, []);
+  const handleSelectMesa = useCallback(
+    (mesaId) => {
+      const status = getMesa(mesaId).status || STATUS.LIVRE;
+      if (status === STATUS.LIVRE) {
+        setMesaSelecionada(mesaId);
+      } else {
+        setMesaParaConfirmar(mesaId);
+      }
+    },
+    [getMesa]
+  );
+
+  const numeroParaConfirmar = mesaParaConfirmar ? Number(mesaParaConfirmar.match(/(\d+)$/)?.[1]) : null;
 
   return (
     <div className="app">
@@ -33,6 +46,20 @@ function App() {
         <Legend />
         <Kpis mesas={mesas} />
       </main>
+
+      {mesaParaConfirmar && (
+        <ConfirmDialog
+          title={`Mesa ${numeroParaConfirmar}`}
+          message="Essa mesa já tem uma reserva. Deseja editar?"
+          confirmLabel="Sim"
+          cancelLabel="Não"
+          onConfirm={() => {
+            setMesaSelecionada(mesaParaConfirmar);
+            setMesaParaConfirmar(null);
+          }}
+          onCancel={() => setMesaParaConfirmar(null)}
+        />
+      )}
 
       {mesaSelecionada && (
         <MesaModal

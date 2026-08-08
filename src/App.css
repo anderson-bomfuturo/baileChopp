@@ -382,3 +382,62 @@ body {
 .btn:active {
   transform: scale(0.98);
 }
+
+.btn-confirm {
+  background: linear-gradient(180deg, #fbbf24, var(--accent));
+  color: #4a2e00;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+}
+
+/* ---------- Confirmação (popup rápido de sim/não) ---------- */
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 20px;
+}
+
+.confirm-card {
+  background: #ffffff;
+  color: #1f2430;
+  width: 100%;
+  max-width: 340px;
+  border-radius: 24px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.confirm-icon {
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.confirm-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.confirm-message {
+  margin: 0 0 22px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-actions .btn {
+  width: auto;
+  flex: 1;
+}
