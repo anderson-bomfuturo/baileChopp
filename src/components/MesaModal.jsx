@@ -10,6 +10,7 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
   const [comprador, setComprador] = useState(mesaData.comprador || '');
   const [telefone, setTelefone] = useState(mesaData.telefone || '');
   const [valor, setValor] = useState(mesaData.valor || '');
+  const [barris, setBarris] = useState(mesaData.barris || '');
   const [observacao, setObservacao] = useState(mesaData.observacao || '');
   const [comprovante, setComprovante] = useState(null);
 
@@ -26,7 +27,15 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
   }
 
   function handleSalvar() {
-    onSave(mesaId, { status, comprador, telefone, valor, observacao, comprovanteCodigo: comprovante?.codigo });
+    onSave(mesaId, {
+      status,
+      comprador,
+      telefone,
+      valor,
+      barris,
+      observacao,
+      comprovanteCodigo: comprovante?.codigo,
+    });
     onClose();
   }
 
@@ -43,7 +52,7 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
       comprovanteCodigo = result.codigo;
     }
 
-    onSave(mesaId, { status, comprador, telefone, valor, observacao, comprovanteCodigo });
+    onSave(mesaId, { status, comprador, telefone, valor, barris, observacao, comprovanteCodigo });
 
     const message = buildWhatsappMessage({
       numero,
@@ -105,6 +114,18 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
               value={comprador}
               onChange={(e) => setComprador(e.target.value)}
               placeholder="Ex: João da Silva"
+            />
+          </label>
+
+          <label className="field">
+            <span>Quantidade de barris de chopp</span>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={barris}
+              onChange={(e) => setBarris(e.target.value)}
+              placeholder="Ex: 1"
             />
           </label>
 

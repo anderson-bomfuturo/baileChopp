@@ -8,6 +8,7 @@ export default function Kpis({ mesas }) {
     const counts = STATUS_LIST.reduce((acc, s) => ({ ...acc, [s]: 0 }), {});
     let arrecadado = 0;
     let aReceber = 0;
+    let barris = 0;
 
     Object.values(mesas).forEach((mesa) => {
       const status = mesa.status || STATUS.LIVRE;
@@ -15,13 +16,14 @@ export default function Kpis({ mesas }) {
       const valor = Number(mesa.valor) || 0;
       if (status === STATUS.PAGO) arrecadado += valor;
       if (status === STATUS.RESERVADO) aReceber += valor;
+      barris += Number(mesa.barris) || 0;
     });
 
     const usadas = Object.keys(mesas).length;
     const livres = TOTAL_MESAS - usadas;
     const ocupacao = Math.round(((TOTAL_MESAS - livres) / TOTAL_MESAS) * 100);
 
-    return { counts, livres, arrecadado, aReceber, ocupacao };
+    return { counts, livres, arrecadado, aReceber, barris, ocupacao };
   }, [mesas]);
 
   const money = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -59,6 +61,10 @@ export default function Kpis({ mesas }) {
       <div className="kpi-card kpi-money-pending">
         <div className="kpi-value">{money(stats.aReceber)}</div>
         <div className="kpi-label">A receber (reservas)</div>
+      </div>
+      <div className="kpi-card kpi-barris">
+        <div className="kpi-value">🛢️ {stats.barris}</div>
+        <div className="kpi-label">Barris de chopp</div>
       </div>
     </div>
   );
