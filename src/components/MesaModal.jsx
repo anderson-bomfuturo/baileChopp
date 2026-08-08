@@ -27,6 +27,7 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
 
   function handleSalvar() {
     onSave(mesaId, { status, comprador, telefone, valor, observacao, comprovanteCodigo: comprovante?.codigo });
+    onClose();
   }
 
   function handleGerarComprovante() {
@@ -53,6 +54,7 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
       comprovanteCodigo,
     });
     openWhatsapp({ telefone, message });
+    onClose();
   }
 
   function handleBaixarComprovante() {
