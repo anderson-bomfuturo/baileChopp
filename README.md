@@ -1,70 +1,32 @@
-# Getting Started with Create React App
+# Baile do Chopp — Mapa de Reservas de Mesas
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+App React (Create React App) para gerenciar reservas de mesas de um evento, com status por mesa (LIVRE, RESERVADO, PAGO, ENTREGUE, PATROCÍNIO), popup de cadastro, geração de comprovante e envio via WhatsApp. Dados persistidos no Supabase, com sincronização em tempo real entre telas/dispositivos.
 
-## Available Scripts
+## Rodando localmente
 
-In the project directory, you can run:
+```bash
+npm install
+cp .env.example .env.local   # preencha com os dados do seu projeto Supabase
+npm start
+```
 
-### `npm start`
+## Banco de dados (Supabase)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Crie um projeto em [supabase.com](https://supabase.com).
+2. No **SQL Editor**, rode o script [`supabase/schema.sql`](supabase/schema.sql) — cria a tabela `reservas`, habilita Realtime e configura as policies de acesso público (o app usa a chave anônima direto do navegador, sem login).
+3. Em **Project Settings > API**, copie a **Project URL** e a **anon public key**.
+4. Preencha `.env.local` (dev) ou as variáveis de ambiente do Vercel (produção) com:
+   - `REACT_APP_SUPABASE_URL`
+   - `REACT_APP_SUPABASE_ANON_KEY`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Deploy (Vercel)
 
-### `npm test`
+1. Importe o repositório do GitHub no [Vercel](https://vercel.com/new). Detecção automática de Create React App (sem configuração extra).
+2. Em **Environment Variables**, adicione `REACT_APP_SUPABASE_URL` e `REACT_APP_SUPABASE_ANON_KEY` com os mesmos valores do Supabase.
+3. Deploy. A cada push na branch principal, o Vercel gera um novo deploy automaticamente.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Scripts disponíveis
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `npm start` — modo desenvolvimento em [http://localhost:3000](http://localhost:3000)
+- `npm test` — testes
+- `npm run build` — build de produção em `build/`
