@@ -351,6 +351,44 @@ body {
   letter-spacing: 0.02em;
 }
 
+.status-picker {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+@media (min-width: 380px) {
+  .status-picker {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.status-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--modal-border);
+  background: var(--modal-surface);
+  color: var(--modal-text);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.status-option svg {
+  font-size: 18px;
+  flex: none;
+}
+
+.status-option-active {
+  font-weight: 700;
+}
+
 .field input,
 .field select,
 .field textarea {

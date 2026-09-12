@@ -10,6 +10,7 @@ import {
   IoCopyOutline,
 } from 'react-icons/io5';
 import { STATUS, STATUS_CONFIG, STATUS_LIST } from '../data/statusConfig';
+import { STATUS_ICONS } from '../data/statusIcons';
 import { BARRIS, calcularValorTotal, VALOR_MESA } from '../data/pricing';
 import { buildWhatsappMessage, openWhatsapp } from '../utils/whatsapp';
 import { gerarComprovante, baixarComprovante } from '../utils/receipt';
@@ -160,16 +161,27 @@ export default function MesaModal({ mesaId, mesaData, pixConfig, onSave, onReset
             {isNovaReserva ? 'Esta mesa está livre. Cadastre a reserva abaixo.' : 'Edite os dados desta mesa.'}
           </p>
 
-          <label className="field">
+          <div className="field">
             <span>Status</span>
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              {STATUS_LIST.map((s) => (
-                <option key={s} value={s}>
-                  {STATUS_CONFIG[s].emoji} {STATUS_CONFIG[s].label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <div className="status-picker">
+              {STATUS_LIST.map((s) => {
+                const { icon: Icon, color } = STATUS_ICONS[s];
+                const active = status === s;
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    className={`status-option${active ? ' status-option-active' : ''}`}
+                    style={active ? { borderColor: color, background: `${color}1f`, color } : undefined}
+                    onClick={() => setStatus(s)}
+                  >
+                    <Icon style={{ color }} />
+                    <span>{STATUS_CONFIG[s].label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <label className="field">
             <span>Nome do comprador</span>
