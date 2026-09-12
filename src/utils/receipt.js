@@ -1,15 +1,16 @@
 // Gera um comprovante de pagamento como imagem PNG usando a Canvas API nativa (sem libs externas).
+import { BARRIS } from '../data/pricing';
 
 function gerarCodigo(mesaId) {
   const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
   return `BC-${mesaId.replace('MESA_', '')}-${rand}`;
 }
 
-export function gerarComprovante({ numero, comprador, valor, mesaId }) {
+export function gerarComprovante({ numero, comprador, valor, barril50, barril30, mesaId }) {
   const codigo = gerarCodigo(mesaId);
   const canvas = document.createElement('canvas');
   const width = 640;
-  const height = 820;
+  const height = 980;
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
@@ -47,10 +48,14 @@ export function gerarComprovante({ numero, comprador, valor, mesaId }) {
   const rows = [
     ['Mesa', String(numero)],
     ['Comprador', comprador || '-'],
+  ];
+  if (Number(barril50) > 0) rows.push([BARRIS.b50.label, `${Number(barril50)}x`]);
+  if (Number(barril30) > 0) rows.push([BARRIS.b30.label, `${Number(barril30)}x`]);
+  rows.push(
     ['Valor pago', valor ? Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-'],
     ['Data', new Date().toLocaleString('pt-BR')],
-    ['Código', codigo],
-  ];
+    ['Código', codigo]
+  );
 
   let y = cardMargin + 220;
   rows.forEach(([label, value]) => {

@@ -1,16 +1,21 @@
 import { STATUS, STATUS_CONFIG } from '../data/statusConfig';
+import { BARRIS } from '../data/pricing';
+import { formatMoney } from './money';
 
 function onlyDigits(str) {
   return (str || '').replace(/\D/g, '');
 }
 
-function formatMoney(value) {
-  const n = Number(value);
-  if (!value || Number.isNaN(n)) return null;
-  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-export function buildWhatsappMessage({ numero, status, comprador, valor, observacao, comprovanteCodigo }) {
+export function buildWhatsappMessage({
+  numero,
+  status,
+  comprador,
+  valor,
+  barril50,
+  barril30,
+  observacao,
+  comprovanteCodigo,
+}) {
   const cfg = STATUS_CONFIG[status];
   const linhas = [
     '🍺 *Baile do Chopp*',
@@ -19,6 +24,11 @@ export function buildWhatsappMessage({ numero, status, comprador, valor, observa
   ];
 
   if (comprador) linhas.push(`Comprador: ${comprador}`);
+
+  const q50 = Number(barril50) || 0;
+  const q30 = Number(barril30) || 0;
+  if (q50) linhas.push(`${BARRIS.b50.label}: ${q50}x`);
+  if (q30) linhas.push(`${BARRIS.b30.label}: ${q30}x`);
 
   const valorFormatado = formatMoney(valor);
   if (status === STATUS.RESERVADO && valorFormatado) {

@@ -16,7 +16,7 @@ export default function Kpis({ mesas }) {
       const valor = Number(mesa.valor) || 0;
       if (status === STATUS.PAGO) arrecadado += valor;
       if (status === STATUS.RESERVADO) aReceber += valor;
-      barris += Number(mesa.barris) || 0;
+      barris += (Number(mesa.barril50) || 0) + (Number(mesa.barril30) || 0);
     });
 
     const usadas = Object.keys(mesas).length;

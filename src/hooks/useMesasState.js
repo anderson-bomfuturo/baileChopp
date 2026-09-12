@@ -10,7 +10,8 @@ function rowToMesa(row) {
     comprador: row.comprador || '',
     telefone: row.telefone || '',
     valor: row.valor != null ? String(row.valor) : '',
-    barris: row.barris != null ? String(row.barris) : '',
+    barril50: row.barril_50 != null ? String(row.barril_50) : '',
+    barril30: row.barril_30 != null ? String(row.barril_30) : '',
     observacao: row.observacao || '',
     comprovanteCodigo: row.comprovante_codigo || '',
     updatedAt: row.updated_at,
@@ -95,7 +96,15 @@ export function useMesasState() {
 
   const getMesa = useCallback(
     (id) =>
-      mesas[id] || { status: STATUS.LIVRE, comprador: '', telefone: '', valor: '', barris: '', observacao: '' },
+      mesas[id] || {
+        status: STATUS.LIVRE,
+        comprador: '',
+        telefone: '',
+        valor: '',
+        barril50: '',
+        barril30: '',
+        observacao: '',
+      },
     [mesas]
   );
 
@@ -113,7 +122,8 @@ export function useMesasState() {
             comprador: data.comprador || null,
             telefone: data.telefone || null,
             valor: data.valor === '' || data.valor == null ? null : Number(data.valor),
-            barris: data.barris === '' || data.barris == null ? null : Number(data.barris),
+            barril_50: data.barril50 === '' || data.barril50 == null ? null : Number(data.barril50),
+            barril_30: data.barril30 === '' || data.barril30 == null ? null : Number(data.barril30),
             observacao: data.observacao || null,
             comprovante_codigo: data.comprovanteCodigo || null,
           },

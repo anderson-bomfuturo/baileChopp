@@ -343,6 +343,77 @@ body {
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
 }
 
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--modal-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.field-barril {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.field-barril span {
+  flex: 1;
+}
+
+.field-barril input {
+  width: 76px;
+  text-align: center;
+  flex: none;
+}
+
+.field-hint {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--modal-muted);
+}
+
+.pix-box {
+  border: 1px dashed var(--modal-border);
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--modal-surface);
+}
+
+.pix-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.pix-preview img {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 12px;
+  border: 1px solid var(--modal-border);
+  background: #fff;
+}
+
+.pix-copia-cola {
+  width: 100%;
+  font-size: 11px;
+  font-family: monospace;
+  word-break: break-all;
+}
+
 .receipt-box {
   border: 1px dashed var(--modal-border);
   border-radius: 16px;

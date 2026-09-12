@@ -1,25 +1,46 @@
 import React, { useEffect, useState } from 'react';
+import QRCode from 'qrcode';
 import { STATUS, STATUS_CONFIG, STATUS_LIST } from '../data/statusConfig';
+import { BARRIS, calcularValorTotal, VALOR_MESA } from '../data/pricing';
 import { buildWhatsappMessage, openWhatsapp } from '../utils/whatsapp';
 import { gerarComprovante, baixarComprovante } from '../utils/receipt';
+import { formatMoney } from '../utils/money';
+import { buildPixPayload, isPixConfigured } from '../utils/pix';
 
-export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }) {
+export default function MesaModal({ mesaId, mesaData, pixConfig, onSave, onReset, onClose }) {
   const numero = mesaId.match(/(\d+)$/)?.[1] ? String(Number(mesaId.match(/(\d+)$/)[1])) : mesaId;
 
   const [status, setStatus] = useState(mesaData.status || STATUS.LIVRE);
   const [comprador, setComprador] = useState(mesaData.comprador || '');
   const [telefone, setTelefone] = useState(mesaData.telefone || '');
   const [valor, setValor] = useState(mesaData.valor || '');
-  const [barris, setBarris] = useState(mesaData.barris || '');
+  const [barril50, setBarril50] = useState(mesaData.barril50 || '');
+  const [barril30, setBarril30] = useState(mesaData.barril30 || '');
   const [observacao, setObservacao] = useState(mesaData.observacao || '');
   const [comprovante, setComprovante] = useState(null);
+  const [pix, setPix] = useState(null);
+  const [gerandoPix, setGerandoPix] = useState(false);
 
   useEffect(() => {
     setComprovante(null);
+    setPix(null);
   }, [status]);
 
   const isNovaReserva = (mesaData.status || STATUS.LIVRE) === STATUS.LIVRE;
   const precisaValor = status === STATUS.RESERVADO || status === STATUS.PAGO;
+
+  // Enquanto a reserva não foi paga, o valor a pagar acompanha a mesa (R$200)
+  // + os barris escolhidos. Depois de PAGO, o valor fica travado (o que foi
+  // efetivamente recebido pode ter sido ajustado manualmente).
+  useEffect(() => {
+    if (status === STATUS.RESERVADO) {
+      setValor(String(calcularValorTotal({ barril50, barril30 })));
+    }
+  }, [status, barril50, barril30]);
+
+  useEffect(() => {
+    setPix(null);
+  }, [valor]);
 
   function handleClose(e) {
     if (e) e.stopPropagation();
@@ -32,7 +53,8 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
       comprador,
       telefone,
       valor,
-      barris,
+      barril50,
+      barril30,
       observacao,
       comprovanteCodigo: comprovante?.codigo,
     });
@@ -40,7 +62,7 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
   }
 
   function handleGerarComprovante() {
-    const result = gerarComprovante({ numero, comprador, valor, mesaId });
+    const result = gerarComprovante({ numero, comprador, valor, barril50, barril30, mesaId });
     setComprovante(result);
     return result;
   }
@@ -52,13 +74,24 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
       comprovanteCodigo = result.codigo;
     }
 
-    onSave(mesaId, { status, comprador, telefone, valor, barris, observacao, comprovanteCodigo });
+    onSave(mesaId, {
+      status,
+      comprador,
+      telefone,
+      valor,
+      barril50,
+      barril30,
+      observacao,
+      comprovanteCodigo,
+    });
 
     const message = buildWhatsappMessage({
       numero,
       status,
       comprador,
       valor,
+      barril50,
+      barril30,
       observacao,
       comprovanteCodigo,
     });
@@ -74,6 +107,28 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
   function handleLiberarMesa() {
     onReset(mesaId);
     onClose();
+  }
+
+  async function handleGerarPix() {
+    const payload = buildPixPayload({ ...pixConfig, valor, txid: comprovante?.codigo || `MESA${numero}` });
+    if (!payload) return;
+    setGerandoPix(true);
+    try {
+      const qrDataUrl = await QRCode.toDataURL(payload, { width: 260, margin: 1 });
+      setPix({ payload, qrDataUrl });
+    } finally {
+      setGerandoPix(false);
+    }
+  }
+
+  async function handleCopiarPix() {
+    if (!pix?.payload) return;
+    try {
+      await navigator.clipboard.writeText(pix.payload);
+    } catch (err) {
+      // Alguns navegadores/contextos bloqueiam a Clipboard API; o código
+      // continua selecionável/copiável manualmente na tela.
+    }
   }
 
   const cfg = STATUS_CONFIG[status];
@@ -117,17 +172,31 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
             />
           </label>
 
-          <label className="field">
-            <span>Quantidade de barris de chopp</span>
-            <input
-              type="number"
-              min="0"
-              step="1"
-              value={barris}
-              onChange={(e) => setBarris(e.target.value)}
-              placeholder="Ex: 1"
-            />
-          </label>
+          <div className="field-group">
+            <span className="field-group-label">Barril de chopp (opcional)</span>
+            <label className="field field-barril">
+              <span>{BARRIS.b50.label} — {formatMoney(BARRIS.b50.preco)}</span>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={barril50}
+                onChange={(e) => setBarril50(e.target.value)}
+                placeholder="0"
+              />
+            </label>
+            <label className="field field-barril">
+              <span>{BARRIS.b30.label} — {formatMoney(BARRIS.b30.preco)}</span>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={barril30}
+                onChange={(e) => setBarril30(e.target.value)}
+                placeholder="0"
+              />
+            </label>
+          </div>
 
           <label className="field">
             <span>WhatsApp do cliente</span>
@@ -150,7 +219,39 @@ export default function MesaModal({ mesaId, mesaData, onSave, onReset, onClose }
                 onChange={(e) => setValor(e.target.value)}
                 placeholder="0,00"
               />
+              <small className="field-hint">
+                Mesa {formatMoney(VALOR_MESA)}
+                {Number(barril50) > 0 && ` + ${Number(barril50)}x ${BARRIS.b50.label} (${formatMoney(BARRIS.b50.preco)})`}
+                {Number(barril30) > 0 && ` + ${Number(barril30)}x ${BARRIS.b30.label} (${formatMoney(BARRIS.b30.preco)})`}
+                {status === STATUS.RESERVADO && ' — calculado automaticamente, pode ajustar se precisar.'}
+              </small>
             </label>
+          )}
+
+          {precisaValor && Number(valor) > 0 && (
+            <div className="pix-box">
+              {isPixConfigured(pixConfig) ? (
+                <>
+                  <button type="button" className="btn btn-ghost" onClick={handleGerarPix} disabled={gerandoPix}>
+                    💳 {gerandoPix ? 'Gerando...' : `Gerar QR Code Pix (${formatMoney(valor)})`}
+                  </button>
+                  {pix && (
+                    <div className="pix-preview">
+                      <img src={pix.qrDataUrl} alt="QR Code Pix" />
+                      <button type="button" className="btn btn-ghost" onClick={handleCopiarPix}>
+                        📋 Copiar código Pix
+                      </button>
+                      <textarea className="pix-copia-cola" readOnly rows={3} value={pix.payload} />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="field-hint">
+                  Chave Pix não configurada. Peça pro Administrador cadastrar em "Configuração Pix" na tela de
+                  administração para habilitar o QR Code de pagamento.
+                </p>
+              )}
+            </div>
           )}
 
           <label className="field">

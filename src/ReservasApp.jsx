@@ -5,11 +5,13 @@ import ConfirmDialog from './components/ConfirmDialog';
 import Kpis from './components/Kpis';
 import Legend from './components/Legend';
 import { useMesasState } from './hooks/useMesasState';
+import { usePixConfig } from './hooks/usePixConfig';
 import { STATUS } from './data/statusConfig';
 import logoTitulo from './imagens/logotipo_titulo.png';
 
 export default function ReservasApp({ usuario, onLogout }) {
   const { mesas, getMesa, saveMesa, resetMesa, loading, error } = useMesasState();
+  const { config: pixConfig } = usePixConfig();
   const [mesaSelecionada, setMesaSelecionada] = useState(null);
   const [mesaParaConfirmar, setMesaParaConfirmar] = useState(null);
 
@@ -61,7 +63,11 @@ export default function ReservasApp({ usuario, onLogout }) {
           message="Essa mesa já tem uma reserva. Deseja editar?"
           details={[
             { label: 'Cliente', value: mesaConfirmarData.comprador || '—' },
-            { label: 'Barris de chopp', value: mesaConfirmarData.barris || '0' },
+            {
+              label: 'Barris de chopp',
+              value:
+                (Number(mesaConfirmarData.barril50) || 0) + (Number(mesaConfirmarData.barril30) || 0) || '0',
+            },
           ]}
           confirmLabel="Sim"
           cancelLabel="Não"
@@ -77,6 +83,7 @@ export default function ReservasApp({ usuario, onLogout }) {
         <MesaModal
           mesaId={mesaSelecionada}
           mesaData={getMesa(mesaSelecionada)}
+          pixConfig={pixConfig}
           onSave={saveMesa}
           onReset={resetMesa}
           onClose={() => setMesaSelecionada(null)}

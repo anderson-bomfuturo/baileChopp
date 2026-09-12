@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import logoTitulo from '../imagens/logotipo_titulo.png';
+import { usePixConfig } from '../hooks/usePixConfig';
 
 export default function AdminUsersScreen({ usuario, onLogout, criarUsuario, listarUsuarios }) {
   const [username, setUsername] = useState('');
@@ -8,6 +9,28 @@ export default function AdminUsersScreen({ usuario, onLogout, criarUsuario, list
   const [loading, setLoading] = useState(false);
   const [usuarios, setUsuarios] = useState([]);
   const [carregandoLista, setCarregandoLista] = useState(true);
+
+  const { config: pixConfig, loading: carregandoPix, salvarConfig } = usePixConfig();
+  const [pixForm, setPixForm] = useState(pixConfig);
+  const [pixFeedback, setPixFeedback] = useState(null);
+  const [salvandoPix, setSalvandoPix] = useState(false);
+
+  useEffect(() => {
+    setPixForm(pixConfig);
+  }, [pixConfig]);
+
+  async function handleSalvarPix(e) {
+    e.preventDefault();
+    setSalvandoPix(true);
+    setPixFeedback(null);
+    const result = await salvarConfig(pixForm);
+    setSalvandoPix(false);
+    setPixFeedback(
+      result.ok
+        ? { type: 'success', message: 'Chave Pix salva com sucesso.' }
+        : { type: 'error', message: result.message || 'Erro ao salvar. Tente novamente.' }
+    );
+  }
 
   const carregarUsuarios = useCallback(async () => {
     setCarregandoLista(true);
@@ -51,6 +74,62 @@ export default function AdminUsersScreen({ usuario, onLogout, criarUsuario, list
       </header>
 
       <main className="app-main">
+        <form className="admin-card" onSubmit={handleSalvarPix}>
+          <h2 className="admin-card-title">Configuração Pix</h2>
+          <p className="modal-subtitle">
+            Usada para gerar o QR Code de pagamento no popup de reserva. Sem esses dados o botão de Pix fica
+            oculto.
+          </p>
+
+          {carregandoPix ? (
+            <p className="modal-subtitle">Carregando…</p>
+          ) : (
+            <>
+              <label className="field">
+                <span>Chave Pix</span>
+                <input
+                  type="text"
+                  value={pixForm.pixKey}
+                  onChange={(e) => setPixForm((f) => ({ ...f, pixKey: e.target.value }))}
+                  placeholder="CPF/CNPJ, e-mail, telefone ou chave aleatória"
+                />
+              </label>
+
+              <label className="field">
+                <span>Nome do recebedor</span>
+                <input
+                  type="text"
+                  value={pixForm.pixNome}
+                  onChange={(e) => setPixForm((f) => ({ ...f, pixNome: e.target.value }))}
+                  placeholder="Ex: Leomar da Silva"
+                  maxLength={25}
+                />
+              </label>
+
+              <label className="field">
+                <span>Cidade do recebedor</span>
+                <input
+                  type="text"
+                  value={pixForm.pixCidade}
+                  onChange={(e) => setPixForm((f) => ({ ...f, pixCidade: e.target.value }))}
+                  placeholder="Ex: Sao Paulo"
+                  maxLength={15}
+                />
+              </label>
+
+              {pixFeedback && (
+                <div className={pixFeedback.type === 'success' ? 'login-success' : 'login-error'}>
+                  {pixFeedback.message}
+                </div>
+              )}
+
+              <button type="submit" className="btn btn-confirm" disabled={salvandoPix}>
+                {salvandoPix ? 'Salvando…' : 'Salvar chave Pix'}
+              </button>
+            </>
+          )}
+        </form>
+
         <form className="admin-card" onSubmit={handleSubmit}>
           <h2 className="admin-card-title">Cadastrar novo usuário</h2>
           <p className="modal-subtitle">
