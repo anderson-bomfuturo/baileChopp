@@ -55,6 +55,15 @@ body {
   margin: 4px 0 0;
   color: var(--text-muted);
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.app-header-icon {
+  color: #d97706;
+  font-size: 16px;
 }
 
 .session-bar {
@@ -160,11 +169,14 @@ body {
 }
 
 .legend-swatch {
-  width: 16px;
-  height: 16px;
-  border-radius: 5px;
-  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 12px;
 }
 
 /* ---------- KPIs ---------- */
@@ -188,6 +200,24 @@ body {
   border-radius: 14px;
   padding: 14px 10px;
   text-align: center;
+}
+
+.kpi-icon {
+  font-size: 20px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.kpi-money .kpi-icon {
+  color: #16a34a;
+}
+
+.kpi-money-pending .kpi-icon {
+  color: #2563eb;
+}
+
+.kpi-barris .kpi-icon {
+  color: #d97706;
 }
 
 .kpi-value {
@@ -292,6 +322,9 @@ body {
   height: 34px;
   border-radius: 50%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-body {
@@ -355,6 +388,14 @@ body {
   color: var(--modal-muted);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field-group-label svg {
+  font-size: 15px;
+  color: #d97706;
 }
 
 .field-barril {
@@ -456,6 +497,15 @@ body {
   font-weight: 700;
   cursor: pointer;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn svg {
+  font-size: 18px;
+  flex: none;
 }
 
 .btn-outline {
@@ -514,6 +564,9 @@ body {
   font-size: 40px;
   line-height: 1;
   margin-bottom: 10px;
+  color: #f59e0b;
+  display: flex;
+  justify-content: center;
 }
 
 .confirm-title {

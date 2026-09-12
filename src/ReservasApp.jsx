@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { IoBeer } from 'react-icons/io5';
 import TableMap from './components/TableMap';
 import MesaModal from './components/MesaModal';
 import ConfirmDialog from './components/ConfirmDialog';
@@ -34,7 +35,9 @@ export default function ReservasApp({ usuario, onLogout }) {
     <div className="app">
       <header className="app-header">
         <img src={logoTitulo} alt="Baile do Chopp" className="app-logo-title" />
-        <p>Mapa de reservas de mesas</p>
+        <p>
+          <IoBeer className="app-header-icon" /> Mapa de reservas de mesas
+        </p>
         {usuario && (
           <div className="session-bar">
             <span>Olá, {usuario.username}</span>

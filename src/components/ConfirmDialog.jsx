@@ -1,4 +1,5 @@
 import React from 'react';
+import { IoBeer } from 'react-icons/io5';
 
 export default function ConfirmDialog({
   title,
@@ -12,7 +13,9 @@ export default function ConfirmDialog({
   return (
     <div className="confirm-overlay" onClick={onCancel}>
       <div className="confirm-card" onClick={(e) => e.stopPropagation()}>
-        <div className="confirm-icon">🍺</div>
+        <div className="confirm-icon">
+          <IoBeer />
+        </div>
         {title && <h2 className="confirm-title">{title}</h2>}
         <p className="confirm-message">{message}</p>
         {details && details.length > 0 && (

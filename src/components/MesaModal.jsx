@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
+import {
+  IoBeer,
+  IoCloseOutline,
+  IoLogoWhatsapp,
+  IoReceiptOutline,
+  IoDownloadOutline,
+  IoCardOutline,
+  IoCopyOutline,
+} from 'react-icons/io5';
 import { STATUS, STATUS_CONFIG, STATUS_LIST } from '../data/statusConfig';
 import { BARRIS, calcularValorTotal, VALOR_MESA } from '../data/pricing';
 import { buildWhatsappMessage, openWhatsapp } from '../utils/whatsapp';
@@ -142,7 +151,7 @@ export default function MesaModal({ mesaId, mesaData, pixConfig, onSave, onReset
             <div className="modal-header-title">Nº {numero}</div>
           </div>
           <button className="modal-close" onClick={handleClose} aria-label="Fechar">
-            ×
+            <IoCloseOutline />
           </button>
         </div>
 
@@ -173,7 +182,9 @@ export default function MesaModal({ mesaId, mesaData, pixConfig, onSave, onReset
           </label>
 
           <div className="field-group">
-            <span className="field-group-label">Barril de chopp (opcional)</span>
+            <span className="field-group-label">
+              <IoBeer /> Barril de chopp (opcional)
+            </span>
             <label className="field field-barril">
               <span>{BARRIS.b50.label} — {formatMoney(BARRIS.b50.preco)}</span>
               <input
@@ -233,13 +244,13 @@ export default function MesaModal({ mesaId, mesaData, pixConfig, onSave, onReset
               {isPixConfigured(pixConfig) ? (
                 <>
                   <button type="button" className="btn btn-ghost" onClick={handleGerarPix} disabled={gerandoPix}>
-                    💳 {gerandoPix ? 'Gerando...' : `Gerar QR Code Pix (${formatMoney(valor)})`}
+                    <IoCardOutline /> {gerandoPix ? 'Gerando...' : `Gerar QR Code Pix (${formatMoney(valor)})`}
                   </button>
                   {pix && (
                     <div className="pix-preview">
                       <img src={pix.qrDataUrl} alt="QR Code Pix" />
                       <button type="button" className="btn btn-ghost" onClick={handleCopiarPix}>
-                        📋 Copiar código Pix
+                        <IoCopyOutline /> Copiar código Pix
                       </button>
                       <textarea className="pix-copia-cola" readOnly rows={3} value={pix.payload} />
                     </div>
@@ -267,13 +278,13 @@ export default function MesaModal({ mesaId, mesaData, pixConfig, onSave, onReset
           {status === STATUS.PAGO && (
             <div className="receipt-box">
               <button type="button" className="btn btn-ghost" onClick={handleGerarComprovante}>
-                🧾 Gerar comprovante
+                <IoReceiptOutline /> Gerar comprovante
               </button>
               {comprovante && (
                 <div className="receipt-preview">
                   <img src={comprovante.dataUrl} alt="Comprovante de pagamento" />
                   <button type="button" className="btn btn-ghost" onClick={handleBaixarComprovante}>
-                    ⬇️ Baixar comprovante
+                    <IoDownloadOutline /> Baixar comprovante
                   </button>
                 </div>
               )}
@@ -291,7 +302,7 @@ export default function MesaModal({ mesaId, mesaData, pixConfig, onSave, onReset
             Salvar
           </button>
           <button type="button" className="btn btn-whatsapp" onClick={handleEnviarWhatsapp}>
-            📲 Enviar WhatsApp
+            <IoLogoWhatsapp /> Enviar WhatsApp
           </button>
         </div>
       </div>
