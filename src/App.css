@@ -26,6 +26,33 @@ body {
   color: var(--text);
 }
 
+/* Scrollbar personalizada: fininha, arredondada, na cor âmbar do app. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--accent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #d97706;
+  background-clip: content-box;
+}
+
 .app {
   min-height: 100vh;
   display: flex;
