@@ -3,7 +3,7 @@ export const VALOR_MESA = 200;
 
 export const BARRIS = {
   b50: { label: 'Barril 50L (com 4 ingressos)', preco: 1100 },
-  b30: { label: 'Barril 30L', preco: 750 },
+  b30: { label: 'Barril 30L', preco: 700 },
 };
 
 // Soma mesa + barris selecionados. Quantidades ausentes/inválidas contam como 0.

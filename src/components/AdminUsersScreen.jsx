@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { IoDownloadOutline } from 'react-icons/io5';
 import logoTitulo from '../imagens/logotipo_titulo.png';
 import { usePixConfig } from '../hooks/usePixConfig';
+import { baixarVendasExcel } from '../utils/salesExport';
 
 export default function AdminUsersScreen({ usuario, onLogout, criarUsuario, listarUsuarios }) {
   const [username, setUsername] = useState('');
@@ -15,9 +17,25 @@ export default function AdminUsersScreen({ usuario, onLogout, criarUsuario, list
   const [pixFeedback, setPixFeedback] = useState(null);
   const [salvandoPix, setSalvandoPix] = useState(false);
 
+  const [exportando, setExportando] = useState(false);
+  const [exportFeedback, setExportFeedback] = useState(null);
+
   useEffect(() => {
     setPixForm(pixConfig);
   }, [pixConfig]);
+
+  async function handleExportarVendas() {
+    setExportando(true);
+    setExportFeedback(null);
+    try {
+      const total = await baixarVendasExcel();
+      setExportFeedback({ type: 'success', message: `Planilha gerada com ${total} mesa(s).` });
+    } catch (err) {
+      setExportFeedback({ type: 'error', message: err.message || 'Erro ao gerar a planilha.' });
+    } finally {
+      setExportando(false);
+    }
+  }
 
   async function handleSalvarPix(e) {
     e.preventDefault();
@@ -129,6 +147,24 @@ export default function AdminUsersScreen({ usuario, onLogout, criarUsuario, list
             </>
           )}
         </form>
+
+        <div className="admin-card">
+          <h2 className="admin-card-title">Dados de vendas</h2>
+          <p className="modal-subtitle">
+            Baixa uma planilha Excel com todas as mesas (status, comprador, barris, valores) e um resumo com
+            total arrecadado, a receber e barris vendidos.
+          </p>
+
+          {exportFeedback && (
+            <div className={exportFeedback.type === 'success' ? 'login-success' : 'login-error'}>
+              {exportFeedback.message}
+            </div>
+          )}
+
+          <button type="button" className="btn btn-confirm" onClick={handleExportarVendas} disabled={exportando}>
+            <IoDownloadOutline /> {exportando ? 'Gerando…' : 'Baixar vendas em Excel'}
+          </button>
+        </div>
 
         <form className="admin-card" onSubmit={handleSubmit}>
           <h2 className="admin-card-title">Cadastrar novo usuário</h2>
